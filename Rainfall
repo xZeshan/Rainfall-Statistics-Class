@@ -1,0 +1,81 @@
+// Rainfall.h
+
+#ifndef RAINFALL_H
+#define RAINFALL_H
+
+#include "LinkedList.h"
+#include <string>
+
+class Rainfall {
+public:
+    Rainfall();
+    void addMonth(std::string month, double rainfall);
+    void editMonth(std::string month, double rainfall);
+    void printReport() const;
+private:
+    struct MonthData {
+        std::string month;
+        double rainfall;
+        MonthData(std::string m, double r) : month(m), rainfall(r) {}
+    };
+    LinkedList<MonthData> months;
+};
+
+#endif
+
+// Rainfall.cpp
+
+#include "Rainfall.h"
+#include <iostream>
+#include <iomanip>
+
+Rainfall::Rainfall() {}
+
+void Rainfall::addMonth(std::string month, double rainfall) {
+    // Check if month already exists
+    for (int i = 1; i <= months.getLength(); i++) {
+        if (months.getEntry(i).month == month) {
+            std::cout << "ERROR: Month already exists" << std::endl;
+            return;
+        }
+    }
+    months.add(LinkedList<MonthData>::NodePtr(new LinkedList<MonthData>::Node(MonthData(month, rainfall))));
+}
+
+void Rainfall::editMonth(std::string month, double rainfall) {
+    bool found = false;
+    for (int i = 1; i <= months.getLength(); i++) {
+        if (months.getEntry(i).month == month) {
+            months.replace(i, MonthData(month, rainfall));
+            found = true;
+            break;
+        }
+    }
+    if (!found) {
+        std::cout << "ERROR: Month does not exist" << std::endl;
+    }
+}
+
+void Rainfall::printReport() const {
+    double total = 0;
+    double maxRain = -1;
+    double minRain = -1;
+    std::string maxMonth;
+    std::string minMonth;
+    for (int i = 1; i <= months.getLength(); i++) {
+        double rainfall = months.getEntry(i).rainfall;
+        total += rainfall;
+        if (maxRain == -1 || rainfall > maxRain) {
+            maxRain = rainfall;
+            maxMonth = months.getEntry(i).month;
+        }
+        if (minRain == -1 || rainfall < minRain) {
+            minRain = rainfall;
+            minMonth = months.getEntry(i).month;
+        }
+    }
+    std::cout << "Total Rainfall: " << total << " inches" << std::endl;
+    std::cout << "Average Rainfall: " << total / months.getLength() << " inches" << std::endl;
+    std::cout << "Most Rainfall: " << maxMonth << " had " << maxRain << " inches" << std::endl;
+    std::cout << "Least Rainfall: " << minMonth << " had " << minRain << " inches" << std::endl;
+}
