@@ -1,0 +1,35 @@
+#ifndef LIST_H
+#define LIST_H
+
+#include "ListInterface.h"
+#include "Node.h"
+#include "PrecondViolatedExcept.h"
+
+template<class ItemType>
+class LinkedList : public ListInterface<ItemType>
+{
+private:
+    Node<ItemType>* headPtr; // Pointer to first node in the chain;
+                             // (contains the first entry in the list)
+    int itemCount;           // Current count of list items
+
+    // Locates a specified node in this linked list.
+    Node<ItemType>* getNodeAt(int position) const;
+
+public:
+    LinkedList();
+    LinkedList(const LinkedList<ItemType>& aList);
+    virtual ~LinkedList();
+
+    bool isEmpty() const;
+    int getLength() const;
+    bool insert(int newPosition, const ItemType& newEntry);
+    bool remove(int position);
+    void clear();
+
+    ItemType getEntry(int position) const throw(PrecondViolatedExcept);
+    void setEntry(int position, const ItemType& newEntry)
+        throw(PrecondViolatedExcept);
+};
+
+#endif
